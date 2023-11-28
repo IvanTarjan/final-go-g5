@@ -35,7 +35,7 @@ func (r *repositorydentistsql) Create(ctx context.Context, dentist domain.Dentis
 	result, err := statement.Exec(
 		dentist.Name,
 		dentist.LastName,
-		dentist.Code,
+		dentist.License,
 	)
 
 	if err != nil {
@@ -70,7 +70,7 @@ func (r *repositorydentistsql) GetAll(ctx context.Context) ([]domain.Dentist, er
 			&dentist.Id,
 			&dentist.Name,
 			&dentist.LastName,
-			&dentist.Code,
+			&dentist.License,
 		)
 		if err != nil {
 			return []domain.Dentist{}, err
@@ -95,7 +95,7 @@ func (r *repositorydentistsql) GetByID(ctx context.Context, id int) (domain.Dent
 		&dentist.Id,
 		&dentist.Name,
 		&dentist.LastName,
-		&dentist.Code,
+		&dentist.License,
 	)
 
 	if err != nil {
@@ -120,7 +120,7 @@ func (r *repositorydentistsql) Update(
 	result, err := statement.Exec(
 		dentist.Name,
 		dentist.LastName,
-		dentist.Code,
+		dentist.License,
 	)
 
 	if err != nil {
@@ -172,7 +172,7 @@ func (r *repositorydentistsql) Patch(
 	result, err := statement.Exec(
 		dentist.Name,
 		dentist.LastName,
-		dentist.Code,
+		dentist.License,
 	)
 
 	if err != nil {

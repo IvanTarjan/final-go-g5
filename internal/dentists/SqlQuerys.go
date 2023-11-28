@@ -6,7 +6,7 @@ var (
 	QueryGetAllDentists = `SELECT id, name, last_name, code 
 	FROM dentists`
 	QueryDeleteDentist  = `DELETE FROM dentists WHERE id = ?`
-	QueryGetDentistById = `SELECT id, name, last_name, code
+	QueryGetDentistById = `SELECT id, name, last_name, license
 	FROM dentists WHERE id = ?`
 	QueryUpdateDentist = `UPDATE dentists SET name = ?, last_name = ?, code = ?
 	WHERE id = ?`
