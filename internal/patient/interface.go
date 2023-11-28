@@ -1,11 +1,15 @@
 package patient
 
-import "github.com/IvanTarjan/final-go-g5/internal/domain"
+import (
+	"context"
+	"github.com/IvanTarjan/final-go-g5/internal/domain"
+)
 
-type RepositoryInterface interface {
-	Post(domain.Patient) (domain.Patient, error)
-	GetById(id int64) (domain.Patient, error)
-	Put(domain.Patient) (domain.Patient, error)
-	Patch(map[string]string) (domain.Patient, error)
-	DeleteById(id int64) error
+type RepositoryPatients interface {
+	Create(ctx context.Context, patient domain.Patient) (domain.Patient, error)
+	GetAll(ctx context.Context) ([]domain.Patient, error)
+	GetByID(ctx context.Context, id int) (domain.Patient, error)
+	Update(ctx context.Context, patient domain.Patient, id int) (domain.Patient, error)
+	Delete(ctx context.Context, id int) error
+	Patch(ctx context.Context, patient domain.Patient, id int) (domain.Patient, error)
 }

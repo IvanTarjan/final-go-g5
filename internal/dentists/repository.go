@@ -1,52 +1,188 @@
 package dentists
 
 import (
+	"context"
 	"database/sql"
 	"errors"
-
 	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
 
-type repository struct {
+var (
+	ErrPrepareStatement = errors.New("error prepare statement")
+	ErrExecStatement    = errors.New("error exec statement")
+	ErrLastInsertedId   = errors.New("error last inserted id")
+	ErrEmpty            = errors.New("empty list")
+	ErrNotFound         = errors.New("dentist not found")
+)
+
+type repositorydentistsql struct {
 	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) Repository {
-	return &repository{db: db}
+func NewSqlRepository(db *sql.DB) RepositoryDentists {
+	return &repositorydentistsql{db: db}
 }
 
-func (r *repository) Post(dentist domain.Dentist) (domain.Dentist, error) {
-	statement, err := r.db.Prepare(``)
+// Create
+func (r *repositorydentistsql) Create(ctx context.Context, dentist domain.Dentist) (domain.Dentist, error) {
+	statement, err := r.db.Prepare(QueryInsertDentists)
 	if err != nil {
-		return domain.Dentist{}, errors.New("Error Prepare Statement")
+		return domain.Dentist{}, ErrPrepareStatement
 	}
-	result, err := statement.Exec()
+
+	defer statement.Close()
+
+	result, err := statement.Exec(
+		dentist.Name,
+		dentist.LastName,
+		dentist.License,
+	)
+
 	if err != nil {
-		return domain.Dentist{}, errors.New("Error Exec Statement")
+		return domain.Dentist{}, ErrExecStatement
 	}
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return domain.Dentist{}, errors.New("Error Last Inserted Id")
+		return domain.Dentist{}, ErrLastInsertedId
 	}
-	result.RowsAffected()
-	dentist.Id = lastId
+
+	dentist.Id = int(lastId)
+
+	return dentist, nil
+
+}
+
+// GetAll
+func (r *repositorydentistsql) GetAll(ctx context.Context) ([]domain.Dentist, error) {
+	rows, err := r.db.Query(QueryGetAllDentists)
+	if err != nil {
+		return []domain.Dentist{}, err
+	}
+
+	defer rows.Close()
+
+	var dentists []domain.Dentist
+
+	for rows.Next() {
+		var dentist domain.Dentist
+		err := rows.Scan(
+			&dentist.Id,
+			&dentist.Name,
+			&dentist.LastName,
+			&dentist.License,
+		)
+		if err != nil {
+			return []domain.Dentist{}, err
+		}
+
+		dentists = append(dentists, dentist)
+	}
+
+	if err := rows.Err(); err != nil {
+		return []domain.Dentist{}, err
+	}
+
+	return dentists, nil
+}
+
+// GetByID
+func (r *repositorydentistsql) GetByID(ctx context.Context, id int) (domain.Dentist, error) {
+	row := r.db.QueryRow(QueryGetDentistById, id)
+
+	var dentist domain.Dentist
+	err := row.Scan(
+		&dentist.Id,
+		&dentist.Name,
+		&dentist.LastName,
+		&dentist.License,
+	)
+
+	if err != nil {
+		return domain.Dentist{}, err
+	}
 
 	return dentist, nil
 }
 
-func (r *repository) GetByID(id int64) (domain.Dentist, error) {
-	panic("ª")
+// Update
+func (r *repositorydentistsql) Update(
+	ctx context.Context,
+	dentist domain.Dentist,
+	id int) (domain.Dentist, error) {
+	statement, err := r.db.Prepare(QueryUpdateDentist)
+	if err != nil {
+		return domain.Dentist{}, err
+	}
+
+	defer statement.Close()
+
+	result, err := statement.Exec(
+		dentist.Name,
+		dentist.LastName,
+		dentist.License,
+	)
+
+	if err != nil {
+		return domain.Dentist{}, err
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		return domain.Dentist{}, err
+	}
+
+	dentist.Id = id
+
+	return dentist, nil
+
 }
 
-func (r *repository) Put(dentist domain.Dentist, id int64) (domain.Dentist, error) {
-	panic("ª")
+// Delete
+func (r *repositorydentistsql) Delete(ctx context.Context, id int) error {
+	result, err := r.db.Exec(QueryDeleteDentist, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected < 1 {
+		return ErrNotFound
+	}
+
+	return nil
 }
 
-func (r *repository) Patch(id int64, properties map[string]interface{}) (domain.Dentist, error) {
-	panic("ª")
-}
+// Patch Updates a dentist by ID.
+func (r *repositorydentistsql) Patch(
+	ctx context.Context,
+	dentist domain.Dentist,
+	id int) (domain.Dentist, error) {
+	statement, err := r.db.Prepare(QueryUpdateDentist)
+	if err != nil {
+		return domain.Dentist{}, err
+	}
 
-func (r *repository) Delete(id int64) error {
-	panic("ª")
+	defer statement.Close()
+
+	result, err := statement.Exec(
+		dentist.Name,
+		dentist.LastName,
+		dentist.License,
+	)
+
+	if err != nil {
+		return domain.Dentist{}, err
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		return domain.Dentist{}, err
+	}
+
+	return dentist, nil
 }
