@@ -8,19 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type response struct {
-	Data   interface{} `json:"data"`
-	Status int         `json:"status"`
-}
-
 type errorResponse struct {
-	Status  int    `json:"-"`
+	Status  int    `json:"status"`
 	Code    string `json:"code"`
 	Message string `json:"message"`
 }
 
 func Response(ctx *gin.Context, status int, data interface{}) {
 	ctx.JSON(status, data)
+}
+
+type response struct {
+	Data   interface{} `json:"data"`
+	Status int         `json:"status"`
 }
 
 // Success escribe una respuesta exitosa
