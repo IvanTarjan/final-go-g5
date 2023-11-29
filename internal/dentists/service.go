@@ -2,8 +2,9 @@ package dentists
 
 import (
 	"context"
-	"github.com/IvanTarjan/final-go-g5/internal/domain"
 	"log"
+
+	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
 
 type ServiceDentists interface {
@@ -19,7 +20,7 @@ type service struct {
 	repository RepositoryDentists
 }
 
-func NewServiceDentist(repository RepositoryDentists) ServiceDentists {
+func NewServiceDentist(repository RepositoryDentists) *service {
 	return &service{repository: repository}
 }
 

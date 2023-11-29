@@ -2,17 +2,18 @@ package patient
 
 import (
 	"context"
-	"github.com/IvanTarjan/final-go-g5/internal/domain"
 	"log"
+
+	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
 
 type ServicePatients interface {
 	Create(ctx context.Context, patient domain.Patient) (domain.Patient, error)
 	GetAll(ctx context.Context) ([]domain.Patient, error)
-	GetByID(ctx context.Context, id int) (domain.Patient, error)
-	Update(ctx context.Context, patient domain.Patient, id int) (domain.Patient, error)
-	Delete(ctx context.Context, id int) error
-	Patch(ctx context.Context, patient domain.Patient, id int) (domain.Patient, error)
+	GetByID(ctx context.Context, id int64) (domain.Patient, error)
+	Update(ctx context.Context, patient domain.Patient, id int64) (domain.Patient, error)
+	Delete(ctx context.Context, id int64) error
+	Patch(ctx context.Context, attributes map[string]string, id int64) (domain.Patient, error)
 }
 
 type service struct {
@@ -46,7 +47,7 @@ func (s *service) GetAll(ctx context.Context) ([]domain.Patient, error) {
 }
 
 // GetByID returns a Patient by ID.
-func (s *service) GetByID(ctx context.Context, id int) (domain.Patient, error) {
+func (s *service) GetByID(ctx context.Context, id int64) (domain.Patient, error) {
 	patient, err := s.repository.GetByID(ctx, id)
 	if err != nil {
 		log.Println("[ServicePatients][GetByID] error getting patient by ID", err)
@@ -57,7 +58,7 @@ func (s *service) GetByID(ctx context.Context, id int) (domain.Patient, error) {
 }
 
 // Update updates a patient by ID.
-func (s *service) Update(ctx context.Context, patient domain.Patient, id int) (domain.Patient, error) {
+func (s *service) Update(ctx context.Context, patient domain.Patient, id int64) (domain.Patient, error) {
 	patient, err := s.repository.Update(ctx, patient, id)
 	if err != nil {
 		log.Println("[ServicePatients][Update] error updating patient by ID", err)
@@ -68,7 +69,7 @@ func (s *service) Update(ctx context.Context, patient domain.Patient, id int) (d
 }
 
 // Delete deletes a patient by ID.
-func (s *service) Delete(ctx context.Context, id int) error {
+func (s *service) Delete(ctx context.Context, id int64) error {
 	err := s.repository.Delete(ctx, id)
 	if err != nil {
 		log.Println("[ServicePatients][Delete] error deleting patient by ID", err)
@@ -79,26 +80,27 @@ func (s *service) Delete(ctx context.Context, id int) error {
 }
 
 // Patch updates a patient by ID.
-func (s *service) Patch(ctx context.Context, patient domain.Patient, id int) (domain.Patient, error) {
-	patientStore, err := s.repository.GetByID(ctx, id)
-	if err != nil {
-		log.Println("[ServicePatients][Patch] error getting patient by ID", err)
-		return domain.Patient{}, err
-	}
+func (s *service) Patch(ctx context.Context, attributes map[string]string, id int64) (domain.Patient, error) {
+	// patientStore, err := s.repository.GetByID(ctx, int64(id))
+	// if err != nil {
+	// 	log.Println("[ServicePatients][Patch] error getting patient by ID", err)
+	// 	return domain.Patient{}, err
+	// }
 
-	patientPatch, err := s.validatePatch(patientStore, patient)
-	if err != nil {
-		log.Println("[ServicePatients][Patch] error validating patient", err)
-		return domain.Patient{}, err
-	}
+	// patientPatch, err := s.validatePatch(patientStore, patient)
+	// if err != nil {
+	// 	log.Println("[ServicePatients][Patch] error validating patient", err)
+	// 	return domain.Patient{}, err
+	// }
 
-	patient, err = s.repository.Patch(ctx, patientPatch, id)
-	if err != nil {
-		log.Println("[ServicePatients][Patch] error patching patient by ID", err)
-		return domain.Patient{}, err
-	}
+	// patient, err = s.repository.Patch(ctx, patientPatch, id)
+	// if err != nil {
+	// 	log.Println("[ServicePatients][Patch] error patching patient by ID", err)
+	// 	return domain.Patient{}, err
+	// }
 
-	return patient, nil
+	// return patient, nil
+	panic("ª")
 }
 
 // validatePatch is a method that validates the fields to be updated.

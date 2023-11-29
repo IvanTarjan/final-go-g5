@@ -1,13 +1,11 @@
 package dentists
 
 var (
-	QueryInsertDentists = `INSERT INTO dentists(name, last_name, code)
+	QueryInsertDentists = `INSERT INTO dentists(name, last_name, license)
 	VALUES(?,?,?)`
-	QueryGetAllDentists = `SELECT id, name, last_name, code 
-	FROM dentists`
+	QueryGetAllDentists = `SELECT *	FROM dentists`
 	QueryDeleteDentist  = `DELETE FROM dentists WHERE id = ?`
-	QueryGetDentistById = `SELECT id, name, last_name, license
-	FROM dentists WHERE id = ?`
-	QueryUpdateDentist = `UPDATE dentists SET name = ?, last_name = ?, code = ?
+	QueryGetDentistById = `SELECT *	FROM dentists WHERE id = ?`
+	QueryUpdateDentist  = `UPDATE dentists SET name = ?, last_name = ?, license = ?
 	WHERE id = ?`
 )

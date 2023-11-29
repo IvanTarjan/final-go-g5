@@ -10,21 +10,21 @@ import (
 )
 
 type PatientHandler struct {
-	service *patient.Service
+	service patient.ServicePatients
 }
 
-func NewPatientHandler(service *patient.Service) *PatientHandler {
-	return &PatientHandler{service}
+func NewPatientHandler(service *patient.ServicePatients) *PatientHandler {
+	return &PatientHandler{service: *service}
 }
 
-func (h *PatientHandler) Post() gin.HandlerFunc {
+func (h *PatientHandler) Create() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var patient domain.Patient
 		if err := ctx.BindJSON(&patient); err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		createdPatient, err := h.service.Post(patient)
+		createdPatient, err := h.service.Create(ctx, patient)
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -40,7 +40,7 @@ func (h *PatientHandler) GetById() gin.HandlerFunc {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		patient, err := h.service.GetById(int64(id))
+		patient, err := h.service.GetByID(ctx, int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -49,14 +49,14 @@ func (h *PatientHandler) GetById() gin.HandlerFunc {
 	}
 }
 
-func (h *PatientHandler) Put() gin.HandlerFunc {
+func (h *PatientHandler) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var patient domain.Patient
 		if err := ctx.BindJSON(&patient); err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		updatedPatient, err := h.service.Put(patient)
+		updatedPatient, err := h.service.Update(ctx, patient, int64(patient.Id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -67,6 +67,11 @@ func (h *PatientHandler) Put() gin.HandlerFunc {
 
 func (h *PatientHandler) Patch() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+			web.Failure(ctx, 400, err.Error())
+			return
+		}
 		var attributes map[string]string
 		queryParams := ctx.Request.URL.Query()
 		for k, v := range queryParams {
@@ -74,7 +79,7 @@ func (h *PatientHandler) Patch() gin.HandlerFunc {
 				attributes[k] = v[0]
 			}
 		}
-		patchedPatient, err := h.service.Patch(attributes)
+		patchedPatient, err := h.service.Patch(ctx, attributes, int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -83,14 +88,14 @@ func (h *PatientHandler) Patch() gin.HandlerFunc {
 	}
 }
 
-func (h *PatientHandler) DeleteById() gin.HandlerFunc {
+func (h *PatientHandler) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		err = h.service.DeleteById(int64(id))
+		err = h.service.Delete(ctx, int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return

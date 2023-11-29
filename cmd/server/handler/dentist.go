@@ -10,10 +10,10 @@ import (
 )
 
 type Controller struct {
-	service dentists.Service
+	service dentists.ServiceDentists
 }
 
-func NewControllerDentist(service dentists.Service) *Controller {
+func NewControllerDentist(service dentists.ServiceDentists) *Controller {
 	return &Controller{service: service}
 }
 
@@ -24,7 +24,7 @@ func (c *Controller) HandlerGetById() gin.HandlerFunc {
 			web.Failure(ctx, 400, err.Error())
 		}
 
-		dentist, err := c.service.GetByID(int64(idParam))
+		dentist, err := c.service.GetByID(ctx, int64(idParam))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 		}
@@ -40,7 +40,7 @@ func (c *Controller) HandlerPost() gin.HandlerFunc {
 			web.Failure(ctx, 400, err.Error())
 		}
 
-		dentist, err := c.service.Post(dentistRequest)
+		dentist, err := c.service.Create(ctx, dentistRequest)
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 		}
@@ -62,7 +62,7 @@ func (c *Controller) HandlerPut() gin.HandlerFunc {
 			web.Failure(ctx, 400, err.Error())
 		}
 
-		dentist, err := c.service.Put(dentistRequest, int64(idParam))
+		dentist, err := c.service.Update(ctx, dentistRequest, int64(idParam))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 		}
@@ -84,7 +84,7 @@ func (c *Controller) HandleDelete() gin.HandlerFunc {
 			web.Failure(ctx, 400, err.Error())
 		}
 
-		deleteError := c.service.Delete(int64(idParam))
+		deleteError := c.service.Delete(ctx, int64(idParam))
 		if deleteError != nil {
 			web.Failure(ctx, 400, err.Error())
 		}

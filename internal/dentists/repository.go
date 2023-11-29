@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
 
@@ -47,7 +48,7 @@ func (r *repositorydentistsql) Create(ctx context.Context, dentist domain.Dentis
 		return domain.Dentist{}, ErrLastInsertedId
 	}
 
-	dentist.Id = int(lastId)
+	dentist.Id = int64(lastId)
 
 	return dentist, nil
 
@@ -87,7 +88,7 @@ func (r *repositorydentistsql) GetAll(ctx context.Context) ([]domain.Dentist, er
 }
 
 // GetByID
-func (r *repositorydentistsql) GetByID(ctx context.Context, id int) (domain.Dentist, error) {
+func (r *repositorydentistsql) GetByID(ctx context.Context, id int64) (domain.Dentist, error) {
 	row := r.db.QueryRow(QueryGetDentistById, id)
 
 	var dentist domain.Dentist
@@ -109,7 +110,7 @@ func (r *repositorydentistsql) GetByID(ctx context.Context, id int) (domain.Dent
 func (r *repositorydentistsql) Update(
 	ctx context.Context,
 	dentist domain.Dentist,
-	id int) (domain.Dentist, error) {
+	id int64) (domain.Dentist, error) {
 	statement, err := r.db.Prepare(QueryUpdateDentist)
 	if err != nil {
 		return domain.Dentist{}, err
@@ -132,14 +133,14 @@ func (r *repositorydentistsql) Update(
 		return domain.Dentist{}, err
 	}
 
-	dentist.Id = id
+	dentist.Id = int64(id)
 
 	return dentist, nil
 
 }
 
 // Delete
-func (r *repositorydentistsql) Delete(ctx context.Context, id int) error {
+func (r *repositorydentistsql) Delete(ctx context.Context, id int64) error {
 	result, err := r.db.Exec(QueryDeleteDentist, id)
 	if err != nil {
 		return err
@@ -161,7 +162,7 @@ func (r *repositorydentistsql) Delete(ctx context.Context, id int) error {
 func (r *repositorydentistsql) Patch(
 	ctx context.Context,
 	dentist domain.Dentist,
-	id int) (domain.Dentist, error) {
+	id int64) (domain.Dentist, error) {
 	statement, err := r.db.Prepare(QueryUpdateDentist)
 	if err != nil {
 		return domain.Dentist{}, err

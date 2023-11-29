@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
 
@@ -92,7 +93,7 @@ func (r *repositorypatientssql) GetAll(ctx context.Context) ([]domain.Patient, e
 }
 
 // GetByID returns a patient by ID.
-func (r *repositorypatientssql) GetByID(ctx context.Context, id int) (domain.Patient, error) {
+func (r *repositorypatientssql) GetByID(ctx context.Context, id int64) (domain.Patient, error) {
 	row := r.db.QueryRow(QueryGetPatientById, id)
 
 	var patient domain.Patient
@@ -117,7 +118,7 @@ func (r *repositorypatientssql) GetByID(ctx context.Context, id int) (domain.Pat
 func (r *repositorypatientssql) Update(
 	ctx context.Context,
 	patient domain.Patient,
-	id int) (domain.Patient, error) {
+	id int64) (domain.Patient, error) {
 	statement, err := r.db.Prepare(QueryUpdatePatient)
 	if err != nil {
 		return domain.Patient{}, err
@@ -149,7 +150,7 @@ func (r *repositorypatientssql) Update(
 }
 
 // Delete deletes a Patient by ID.
-func (r *repositorypatientssql) Delete(ctx context.Context, id int) error {
+func (r *repositorypatientssql) Delete(ctx context.Context, id int64) error {
 	result, err := r.db.Exec(QueryDeletePatient, id)
 	if err != nil {
 		return err
@@ -168,33 +169,32 @@ func (r *repositorypatientssql) Delete(ctx context.Context, id int) error {
 }
 
 // Patch is a method that updates a patient by ID.
-func (r *repositorypatientssql) Patch(
-	ctx context.Context,
-	patient domain.Patient,
-	id int) (domain.Patient, error) {
-	statement, err := r.db.Prepare(QueryUpdatePatient)
-	if err != nil {
-		return domain.Patient{}, err
-	}
+func (r *repositorypatientssql) Patch(ctx context.Context, attributes map[string]string, id int64) (domain.Patient, error) {
+	// statement, err := r.db.Prepare(QueryUpdatePatient)
+	// if err != nil {
+	// 	return domain.Patient{}, err
+	// }
 
-	defer statement.Close()
+	// defer statement.Close()
 
-	result, err := statement.Exec(
-		patient.Name,
-		patient.Surname,
-		patient.Address,
-		patient.Dni,
-		patient.DischargeDate,
-	)
+	// result, err := statement.Exec(
+	// 	patient.Name,
+	// 	patient.Surname,
+	// 	patient.Address,
+	// 	patient.Dni,
+	// 	patient.DischargeDate,
+	// )
 
-	if err != nil {
-		return domain.Patient{}, err
-	}
+	// if err != nil {
+	// 	return domain.Patient{}, err
+	// }
 
-	_, err = result.RowsAffected()
-	if err != nil {
-		return domain.Patient{}, err
-	}
+	// _, err = result.RowsAffected()
+	// if err != nil {
+	// 	return domain.Patient{}, err
+	// }
 
-	return patient, nil
+	// return patient, nil
+	panic("ª")
+
 }
