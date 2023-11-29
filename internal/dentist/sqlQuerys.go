@@ -1,4 +1,4 @@
-package dentists
+package dentist
 
 var (
 	QueryInsertDentists = `INSERT INTO dentists(name, last_name, license)

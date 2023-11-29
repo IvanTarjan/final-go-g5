@@ -1,4 +1,4 @@
-package dentists
+package dentist
 
 import (
 	"github.com/IvanTarjan/final-go-g5/internal/domain"

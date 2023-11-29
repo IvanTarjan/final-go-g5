@@ -1,4 +1,4 @@
-package dentists
+package dentist
 
 import (
 	"database/sql"
