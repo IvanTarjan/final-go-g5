@@ -3,17 +3,17 @@ package handler
 import (
 	"strconv"
 
-	"github.com/IvanTarjan/final-go-g5/internal/dentists"
+	"github.com/IvanTarjan/final-go-g5/internal/dentist"
 	"github.com/IvanTarjan/final-go-g5/internal/domain"
 	"github.com/IvanTarjan/final-go-g5/pkg/web"
 	"github.com/gin-gonic/gin"
 )
 
 type Controller struct {
-	service dentists.ServiceDentists
+	service dentist.ServiceDentists
 }
 
-func NewControllerDentist(service dentists.ServiceDentists) *Controller {
+func NewControllerDentist(service dentist.ServiceDentists) *Controller {
 	return &Controller{service: service}
 }
 
