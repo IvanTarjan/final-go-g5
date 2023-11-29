@@ -1,9 +1,10 @@
 package patient
 
 import (
-	"context"
 	"database/sql"
 	"errors"
+	"strings"
+	"time"
 
 	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
@@ -20,13 +21,12 @@ type repositorypatientssql struct {
 	db *sql.DB
 }
 
-// NewMemoryRepository ....
 func NewPatientsSqlRepository(db *sql.DB) RepositoryPatients {
 	return &repositorypatientssql{db: db}
 }
 
 // Create creates a new patient.
-func (r *repositorypatientssql) Create(ctx context.Context, patient domain.Patient) (domain.Patient, error) {
+func (r *repositorypatientssql) Create(patient domain.Patient) (domain.Patient, error) {
 	statement, err := r.db.Prepare(QueryInsertPatient)
 	if err != nil {
 		return domain.Patient{}, ErrPrepareStatement
@@ -57,8 +57,8 @@ func (r *repositorypatientssql) Create(ctx context.Context, patient domain.Patie
 
 }
 
-// GetAll returns all patient.
-func (r *repositorypatientssql) GetAll(ctx context.Context) ([]domain.Patient, error) {
+// GetAll returns all patients.
+func (r *repositorypatientssql) GetAll() ([]domain.Patient, error) {
 	rows, err := r.db.Query(QueryGetAllPatient)
 	if err != nil {
 		return []domain.Patient{}, err
@@ -93,7 +93,7 @@ func (r *repositorypatientssql) GetAll(ctx context.Context) ([]domain.Patient, e
 }
 
 // GetByID returns a patient by ID.
-func (r *repositorypatientssql) GetByID(ctx context.Context, id int64) (domain.Patient, error) {
+func (r *repositorypatientssql) GetByID(id int64) (domain.Patient, error) {
 	row := r.db.QueryRow(QueryGetPatientById, id)
 
 	var patient domain.Patient
@@ -116,7 +116,6 @@ func (r *repositorypatientssql) GetByID(ctx context.Context, id int64) (domain.P
 
 // Update updates a Patient by ID.
 func (r *repositorypatientssql) Update(
-	ctx context.Context,
 	patient domain.Patient,
 	id int64) (domain.Patient, error) {
 	statement, err := r.db.Prepare(QueryUpdatePatient)
@@ -150,7 +149,7 @@ func (r *repositorypatientssql) Update(
 }
 
 // Delete deletes a Patient by ID.
-func (r *repositorypatientssql) Delete(ctx context.Context, id int64) error {
+func (r *repositorypatientssql) Delete(id int64) error {
 	result, err := r.db.Exec(QueryDeletePatient, id)
 	if err != nil {
 		return err
@@ -168,33 +167,52 @@ func (r *repositorypatientssql) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-// Patch is a method that updates a patient by ID.
-func (r *repositorypatientssql) Patch(ctx context.Context, attributes map[string]string, id int64) (domain.Patient, error) {
-	// statement, err := r.db.Prepare(QueryUpdatePatient)
-	// if err != nil {
-	// 	return domain.Patient{}, err
-	// }
+// Patch updates a Patient by any field.
+func (r *repositorypatientssql) Patch(
+	patient domain.Patient,
+	id int64) (domain.Patient, error) {
 
-	// defer statement.Close()
+	var fieldsToUpdate []string
+	var args []interface{}
 
-	// result, err := statement.Exec(
-	// 	patient.Name,
-	// 	patient.Surname,
-	// 	patient.Address,
-	// 	patient.Dni,
-	// 	patient.DischargeDate,
-	// )
+	if patient.Name != "" {
+		fieldsToUpdate = append(fieldsToUpdate, "name = ?")
+		args = append(args, patient.Name)
+	}
+	if patient.Surname != "" {
+		fieldsToUpdate = append(fieldsToUpdate, "surname = ?")
+		args = append(args, patient.Surname)
+	}
+	if patient.Address != "" {
+		fieldsToUpdate = append(fieldsToUpdate, "address = ?")
+		args = append(args, patient.Address)
+	}
+	if patient.Dni != "" {
+		fieldsToUpdate = append(fieldsToUpdate, "dni = ?")
+		args = append(args, patient.Dni)
+	}
+	if time.Time.IsZero(patient.DischargeDate.Time) {
+		fieldsToUpdate = append(fieldsToUpdate, "discharge_date = ?")
+		args = append(args, patient.DischargeDate)
+	}
 
-	// if err != nil {
-	// 	return domain.Patient{}, err
-	// }
+	if len(fieldsToUpdate) == 0 {
+		return domain.Patient{}, ErrEmpty
+	}
 
-	// _, err = result.RowsAffected()
-	// if err != nil {
-	// 	return domain.Patient{}, err
-	// }
+	queryString := "UPDATE patients SET " + strings.Join(fieldsToUpdate, ", ") + " WHERE id = ?"
+	args = append(args, id)
 
-	// return patient, nil
-	panic("ª")
+	statement, err := r.db.Prepare(queryString)
+	if err != nil {
+		return domain.Patient{}, err
+	}
+	defer statement.Close()
 
+	_, err = statement.Exec(args...)
+	if err != nil {
+		return domain.Patient{}, err
+	}
+
+	return r.GetByID(int64(id))
 }

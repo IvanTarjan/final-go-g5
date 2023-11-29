@@ -17,14 +17,15 @@ func NewPatientHandler(service *patient.ServicePatients) *PatientHandler {
 	return &PatientHandler{service: *service}
 }
 
-func (h *PatientHandler) Create() gin.HandlerFunc {
+func (h *PatientHandler) HandlerCreate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var patient domain.Patient
 		if err := ctx.BindJSON(&patient); err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		createdPatient, err := h.service.Create(ctx, patient)
+
+		createdPatient, err := h.service.Create(patient)
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -33,14 +34,15 @@ func (h *PatientHandler) Create() gin.HandlerFunc {
 	}
 }
 
-func (h *PatientHandler) GetById() gin.HandlerFunc {
+func (h *PatientHandler) HandlerGetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		patient, err := h.service.GetByID(ctx, int64(id))
+
+		patient, err := h.service.GetByID(int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -49,14 +51,21 @@ func (h *PatientHandler) GetById() gin.HandlerFunc {
 	}
 }
 
-func (h *PatientHandler) Update() gin.HandlerFunc {
+func (h *PatientHandler) HandlerUpdate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+			web.Failure(ctx, 400, err.Error())
+			return
+		}
+
 		var patient domain.Patient
 		if err := ctx.BindJSON(&patient); err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		updatedPatient, err := h.service.Update(ctx, patient, int64(patient.Id))
+
+		updatedPatient, err := h.service.Update(patient, int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -65,37 +74,38 @@ func (h *PatientHandler) Update() gin.HandlerFunc {
 	}
 }
 
-func (h *PatientHandler) Patch() gin.HandlerFunc {
+func (h *PatientHandler) HandlerPatch() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		var attributes map[string]string
-		queryParams := ctx.Request.URL.Query()
-		for k, v := range queryParams {
-			if len(v) > 0 {
-				attributes[k] = v[0]
-			}
+
+		var patient domain.Patient
+		if err := ctx.BindJSON(&patient); err != nil {
+			web.Failure(ctx, 400, err.Error())
+			return
 		}
-		patchedPatient, err := h.service.Patch(ctx, attributes, int64(id))
+
+		patchedPatient, err := h.service.Patch(patient, int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
+
 		web.Success(ctx, 200, patchedPatient)
 	}
 }
 
-func (h *PatientHandler) Delete() gin.HandlerFunc {
+func (h *PatientHandler) HandlerDelete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		err = h.service.Delete(ctx, int64(id))
+		err = h.service.Delete(int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
