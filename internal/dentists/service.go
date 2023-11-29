@@ -10,10 +10,10 @@ import (
 type ServiceDentists interface {
 	Create(ctx context.Context, dentist domain.Dentist) (domain.Dentist, error)
 	GetAll(ctx context.Context) ([]domain.Dentist, error)
-	GetByID(ctx context.Context, id int) (domain.Dentist, error)
-	Update(ctx context.Context, dentist domain.Dentist, id int) (domain.Dentist, error)
-	Delete(ctx context.Context, id int) error
-	Patch(ctx context.Context, dentist domain.Dentist, id int) (domain.Dentist, error)
+	GetByID(ctx context.Context, id int64) (domain.Dentist, error)
+	Update(ctx context.Context, dentist domain.Dentist, id int64) (domain.Dentist, error)
+	Delete(ctx context.Context, id int64) error
+	Patch(ctx context.Context, dentist domain.Dentist, id int64) (domain.Dentist, error)
 }
 
 type service struct {
@@ -47,7 +47,7 @@ func (s *service) GetAll(ctx context.Context) ([]domain.Dentist, error) {
 }
 
 // GetByID Dentist by ID.
-func (s *service) GetByID(ctx context.Context, id int) (domain.Dentist, error) {
+func (s *service) GetByID(ctx context.Context, id int64) (domain.Dentist, error) {
 	dentist, err := s.repository.GetByID(ctx, id)
 	if err != nil {
 		log.Println("[ServiceDentist][GetByID] error getting dentist by ID", err)
@@ -58,7 +58,7 @@ func (s *service) GetByID(ctx context.Context, id int) (domain.Dentist, error) {
 }
 
 // Update updates a dentist by ID.
-func (s *service) Update(ctx context.Context, dentist domain.Dentist, id int) (domain.Dentist, error) {
+func (s *service) Update(ctx context.Context, dentist domain.Dentist, id int64) (domain.Dentist, error) {
 	dentist, err := s.repository.Update(ctx, dentist, id)
 	if err != nil {
 		log.Println("[ServiceDentist][Update] error updating dentist by ID", err)
@@ -69,7 +69,7 @@ func (s *service) Update(ctx context.Context, dentist domain.Dentist, id int) (d
 }
 
 // Delete Deletes a dentist by ID.
-func (s *service) Delete(ctx context.Context, id int) error {
+func (s *service) Delete(ctx context.Context, id int64) error {
 	err := s.repository.Delete(ctx, id)
 	if err != nil {
 		log.Println("[ServiceDentist][Delete] error deleting dentist by ID", err)
