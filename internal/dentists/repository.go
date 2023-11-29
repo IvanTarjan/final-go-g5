@@ -107,10 +107,7 @@ func (r *repositorydentistsql) GetByID(ctx context.Context, id int64) (domain.De
 }
 
 // Update
-func (r *repositorydentistsql) Update(
-	ctx context.Context,
-	dentist domain.Dentist,
-	id int64) (domain.Dentist, error) {
+func (r *repositorydentistsql) Update(ctx context.Context, dentist domain.Dentist, id int64) (domain.Dentist, error) {
 	statement, err := r.db.Prepare(QueryUpdateDentist)
 	if err != nil {
 		return domain.Dentist{}, err
@@ -159,31 +156,7 @@ func (r *repositorydentistsql) Delete(ctx context.Context, id int64) error {
 }
 
 // Patch Updates a dentist by ID.
-func (r *repositorydentistsql) Patch(
-	ctx context.Context,
-	dentist domain.Dentist,
-	id int64) (domain.Dentist, error) {
-	statement, err := r.db.Prepare(QueryUpdateDentist)
-	if err != nil {
-		return domain.Dentist{}, err
-	}
+func (r *repositorydentistsql) Patch(ctx context.Context, attributes map[string]string, id int64) (domain.Dentist, error) {
 
-	defer statement.Close()
-
-	result, err := statement.Exec(
-		dentist.Name,
-		dentist.LastName,
-		dentist.License,
-	)
-
-	if err != nil {
-		return domain.Dentist{}, err
-	}
-
-	_, err = result.RowsAffected()
-	if err != nil {
-		return domain.Dentist{}, err
-	}
-
-	return dentist, nil
+	panic("ª")
 }
