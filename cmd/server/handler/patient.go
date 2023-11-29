@@ -19,13 +19,13 @@ func NewPatientHandler(service *patient.ServicePatients) *PatientHandler {
 
 func (h *PatientHandler) HandlerCreate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var patient domain.Patient
-		if err := ctx.BindJSON(&patient); err != nil {
+		var patientTemp domain.Patient
+		if err := ctx.BindJSON(&patientTemp); err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
 
-		createdPatient, err := h.service.Create(patient)
+		createdPatient, err := h.service.Create(patientTemp)
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -42,12 +42,12 @@ func (h *PatientHandler) HandlerGetById() gin.HandlerFunc {
 			return
 		}
 
-		patient, err := h.service.GetByID(int64(id))
+		patientTemp, err := h.service.GetByID(int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
-		web.Success(ctx, 200, patient)
+		web.Success(ctx, 200, patientTemp)
 	}
 }
 
@@ -59,13 +59,13 @@ func (h *PatientHandler) HandlerUpdate() gin.HandlerFunc {
 			return
 		}
 
-		var patient domain.Patient
-		if err := ctx.BindJSON(&patient); err != nil {
+		var patientTemp domain.Patient
+		if err := ctx.BindJSON(&patientTemp); err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
 
-		updatedPatient, err := h.service.Update(patient, int64(id))
+		updatedPatient, err := h.service.Update(patientTemp, int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
@@ -82,13 +82,13 @@ func (h *PatientHandler) HandlerPatch() gin.HandlerFunc {
 			return
 		}
 
-		var patient domain.Patient
-		if err := ctx.BindJSON(&patient); err != nil {
+		var patientTemp domain.Patient
+		if err := ctx.BindJSON(&patientTemp); err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
 		}
 
-		patchedPatient, err := h.service.Patch(patient, int64(id))
+		patchedPatient, err := h.service.Patch(patientTemp, int64(id))
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())
 			return
