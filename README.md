@@ -28,6 +28,6 @@ El proyecto está siendo desarrollado por un equipo comprometido y colaborativo,
 
 Conformado por:
 - Ivan Tarjan
-- Javier paredes
+- Javier Paredes
 - Andres Galvan
 - Pablo Velez
