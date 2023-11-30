@@ -22,7 +22,7 @@ Este proyecto se enfoca en el desarrollo de una API destinada a la gestión efic
 
 ## Equipo de Desarrollo
 
-El proyecto está siendo desarrollado por un equipo comprometido y colaborativo, enfocado en la entrega de un producto de alta calidad. Cada miembro del equipo aporta habilidades específicas que se integran para lograr el éxito del proyecto. ¡Únete a nosotros en esta emocionante travesía de desarrollo!
+El proyecto está siendo desarrollado por un equipo comprometido y colaborativo, enfocado en la entrega de un producto de alta calidad. Cada miembro del equipo aporta habilidades específicas que se integran para lograr el éxito del proyecto.
 
 #### Conformado por:
 - Ivan Tarjan
