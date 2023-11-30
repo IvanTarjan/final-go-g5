@@ -11,14 +11,14 @@ type Patient struct {
 	Surname       string     `json:"surname"`
 	Address       string     `json:"address"`
 	Dni           string     `json:"dni"`
-	DischargeDate CustomTime `json:"discharge_date"`
+	DischargeDate CustomDate `json:"discharge_date"`
 }
 
-type CustomTime struct {
+type CustomDate struct {
 	time.Time
 }
 
-func (t *CustomTime) UnmarshalJSON(b []byte) (err error) {
+func (t *CustomDate) UnmarshalJSON(b []byte) (err error) {
 	dateString := strings.Trim(string(b), `"`)
 	date, err := time.Parse(time.DateOnly, dateString)
 	if err != nil {
@@ -28,7 +28,7 @@ func (t *CustomTime) UnmarshalJSON(b []byte) (err error) {
 	return nil
 }
 
-func (t *CustomTime) MarshalJSON() ([]byte, error) {
+func (t *CustomDate) MarshalJSON() ([]byte, error) {
 	dateString := time.Time.Format(t.Time, time.DateOnly)
 	return []byte(`"` + dateString + `"`), nil
 }
