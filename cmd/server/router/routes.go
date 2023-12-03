@@ -47,12 +47,12 @@ func (r *router) buildPatientRoutes() {
 	patientGroup := r.routerGroup.Group("/patient")
 	{
 		patientGroup.POST("", middleware.Authenticate(), patientHandler.HandlerCreate())
-		// patientGroup.GET("", patientHandler.GetAll())
+		patientGroup.GET("", patientHandler.HandlerGetAll())
 		patientGroup.GET("/:id", patientHandler.HandlerGetById())
 		patientGroup.PUT("/:id", middleware.Authenticate(), patientHandler.HandlerUpdate())
 		patientGroup.PATCH(("/:id"), middleware.Authenticate(), patientHandler.HandlerPatch())
 		patientGroup.DELETE("/:id", middleware.Authenticate(), patientHandler.HandlerDelete())
-	}	
+	}
 }
 
 func (r *router) buildDentistRoutes() {
@@ -63,7 +63,7 @@ func (r *router) buildDentistRoutes() {
 	dentistGroup := r.routerGroup.Group("/dentist")
 	{
 		dentistGroup.POST("", middleware.Authenticate(), dentistHandler.HandlerCreate())
-		// dentistGroup.GET("", dentistHandler.GetAll())
+		dentistGroup.GET("", dentistHandler.HandlerGetAll())
 		dentistGroup.GET("/:id", dentistHandler.HandlerGetById())
 		dentistGroup.PUT("/:id", middleware.Authenticate(), dentistHandler.HandlerUpdate())
 		dentistGroup.PATCH("/:id", middleware.Authenticate(), dentistHandler.HandlerPatch())
@@ -81,6 +81,7 @@ func (r *router) buildTurnRoutes() {
 		turnGroup.POST("", middleware.Authenticate(), turnHandler.HandlerCreate())
 		turnGroup.GET("", turnHandler.HandlerGetAll())
 		turnGroup.GET("/:id", turnHandler.HandlerGetById())
+		turnGroup.GET("/dni/:dni", turnHandler.HandlerGetByPatientDni())
 		turnGroup.PUT("/:id", middleware.Authenticate(), turnHandler.HandlerUpdate())
 		turnGroup.PATCH("/:id", middleware.Authenticate(), turnHandler.HandlerPatch())
 		turnGroup.DELETE("/:id", middleware.Authenticate(), turnHandler.HandlerDelete())

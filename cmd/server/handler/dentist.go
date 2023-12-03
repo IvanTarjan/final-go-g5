@@ -34,6 +34,17 @@ func (h *DentistHandler) HandlerCreate() gin.HandlerFunc {
 	}
 }
 
+func (h *DentistHandler) HandlerGetAll() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		dentistList, err := h.service.GetAll()
+		if err != nil {
+			web.Failure(ctx, 400, err.Error())
+			return
+		}
+		web.Success(ctx, 200, dentistList)
+	}
+}
+
 func (h *DentistHandler) HandlerGetById() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))

@@ -3,7 +3,7 @@ package turn
 import (
 	"database/sql"
 	"errors"
-	"time"
+	"strings"
 
 	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
@@ -16,18 +16,17 @@ var (
 	ErrNotFound         = errors.New("dentist not found")
 )
 
-type repositoryturnssql struct {
+type repositoryTurnssql struct {
 	db *sql.DB
 }
 
+func NewTurnSqlRepository(db *sql.DB) RepositoryTurn {
+	return &repositoryTurnssql{db: db}
+}
+
 // Create implements RepositoryTurn.
-func (r *repositoryturnssql) Create(turn domain.Turn) (domain.Turn, error) {
-	statement, err := r.db.Prepare(QueryInsertTurn)
-	if err != nil {
-		return domain.Turn{}, ErrPrepareStatement
-	}
-	defer statement.Close()
-	result, err := statement.Exec(turn.PatientId, turn.DentistId, turn.DateTime.Format(time.DateTime), turn.Description)
+func (r *repositoryTurnssql) Create(turn domain.Turn) (domain.Turn, error) {
+	result, err := r.db.Exec(QueryInsertTurn, turn.DentistId, turn.PatientId, turn.DateTime, turn.Details)
 	if err != nil {
 		return domain.Turn{}, ErrExecStatement
 	}
@@ -40,10 +39,10 @@ func (r *repositoryturnssql) Create(turn domain.Turn) (domain.Turn, error) {
 }
 
 // GetAll implements RepositoryTurn.
-func (r *repositoryturnssql) GetAll() ([]domain.Turn, error) {
+func (r *repositoryTurnssql) GetAll() ([]domain.Turn, error) {
 	rows, err := r.db.Query(QueryGetAllTurn)
 	if err != nil {
-		return nil, err
+		return []domain.Turn{}, err
 	}
 	defer rows.Close()
 
@@ -51,19 +50,14 @@ func (r *repositoryturnssql) GetAll() ([]domain.Turn, error) {
 
 	for rows.Next() {
 		var turn domain.Turn
-		var dateTimeString string
 		err := rows.Scan(
 			&turn.Id,
-			&turn.PatientId,
 			&turn.DentistId,
-			&dateTimeString,
-			&turn.Description,
+			&turn.PatientId,
+			&turn.DateTime,
+			&turn.Details,
 		)
 
-		if err != nil {
-			return nil, err
-		}
-		turn.DateTime.Time, err = time.Parse(time.DateTime, dateTimeString)
 		if err != nil {
 			return nil, err
 		}
@@ -77,26 +71,128 @@ func (r *repositoryturnssql) GetAll() ([]domain.Turn, error) {
 	return turns, nil
 }
 
-// Delete implements RepositoryTurn.
-func (r *repositoryturnssql) Delete(id int64) error {
-	panic("unimplemented")
-}
-
 // GetByID implements RepositoryTurn.
-func (r *repositoryturnssql) GetByID(id int64) (domain.Turn, error) {
-	panic("unimplemented")
+func (r *repositoryTurnssql) GetByID(id int64) (domain.Turn, error) {
+	row := r.db.QueryRow(QueryGetTurnById, id)
+
+	var turn domain.Turn
+
+	err := row.Scan(
+		&turn.Id,
+		&turn.DentistId,
+		&turn.PatientId,
+		&turn.DateTime,
+		&turn.Details,
+	)
+
+	if err != nil {
+		return domain.Turn{}, err
+	}
+
+	return turn, nil
 }
 
-// Patch implements RepositoryTurn.
-func (r *repositoryturnssql) Patch(turn domain.Turn, id int64) (domain.Turn, error) {
-	panic("unimplemented")
+func (r *repositoryTurnssql) GetByPatientDni(patientDni string) (domain.Turn, error) {
+	row := r.db.QueryRow(QueryGetByPatientDni, patientDni)
+
+	var turn domain.Turn
+
+	err := row.Scan(
+		&turn.Id,
+		&turn.DentistId,
+		&turn.PatientId,
+		&turn.DateTime,
+		&turn.Details,
+	)
+
+	if err != nil {
+		return domain.Turn{}, err
+	}
+
+	return turn, nil
 }
 
 // Update implements RepositoryTurn.
-func (r *repositoryturnssql) Update(turn domain.Turn, id int64) (domain.Turn, error) {
-	panic("unimplemented")
+func (r *repositoryTurnssql) Update(turn domain.Turn, id int64) (domain.Turn, error) {
+	result, err := r.db.Exec(QueryUpdateTurn,
+		turn.DentistId,
+		turn.PatientId,
+		turn.DateTime,
+		turn.Details,
+		id,
+	)
+
+	if err != nil {
+		return domain.Turn{}, err
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		return domain.Turn{}, err
+	}
+
+	turn.Id = int64(id)
+
+	return turn, nil
 }
 
-func NewTurnSqlRepository(db *sql.DB) RepositoryTurn {
-	return &repositoryturnssql{db: db}
+// Patch implements RepositoryTurn.
+func (r *repositoryTurnssql) Patch(turn domain.Turn, id int64) (domain.Turn, error) {
+	var fieldsToUpdate []string
+	var args []interface{}
+
+	if turn.DentistId != 0 {
+		fieldsToUpdate = append(fieldsToUpdate, "name = ?")
+		args = append(args, turn.DentistId)
+	}
+	if turn.PatientId != 0 {
+		fieldsToUpdate = append(fieldsToUpdate, "last_name = ?")
+		args = append(args, turn.PatientId)
+	}
+	if !turn.DateTime.IsZero() {
+		fieldsToUpdate = append(fieldsToUpdate, "address = ?")
+		args = append(args, turn.DateTime)
+	}
+	if turn.Details != "" {
+		fieldsToUpdate = append(fieldsToUpdate, "details = ?")
+		args = append(args, turn.Details)
+	}
+
+	if len(fieldsToUpdate) == 0 {
+		return domain.Turn{}, ErrEmpty
+	}
+
+	queryString := "UPDATE turn SET " + strings.Join(fieldsToUpdate, ", ") + " WHERE turn_id = ?"
+	args = append(args, id)
+
+	result, err := r.db.Exec(queryString, args...)
+	if err != nil {
+		return domain.Turn{}, err
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		return domain.Turn{}, err
+	}
+
+	return r.GetByID(int64(id))
+}
+
+// Delete implements RepositoryTurn.
+func (r *repositoryTurnssql) Delete(id int64) error {
+	result, err := r.db.Exec(QueryDeleteTurn, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected < 1 {
+		return ErrNotFound
+	}
+
+	return nil
 }

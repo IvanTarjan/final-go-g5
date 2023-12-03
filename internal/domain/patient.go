@@ -34,7 +34,8 @@ func (t *CustomDate) UnmarshalJSON(b []byte) error {
 // 	return []byte(`"` + dateString + `"`), nil
 // }
 
-// temporal <-- ver
+//** Revisar nuevos metodos abajo **
+
 func (c CustomDate) Value() (driver.Value, error) {
 	if c.IsZero() {
 		return nil, nil

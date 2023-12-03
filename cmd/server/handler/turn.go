@@ -61,6 +61,19 @@ func (h *TurnHandler) HandlerGetById() gin.HandlerFunc {
 	}
 }
 
+func (h *TurnHandler) HandlerGetByPatientDni() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		dni := ctx.Param("dni")
+
+		turnTemp, err := h.service.GetByPatientDni(dni)
+		if err != nil {
+			web.Failure(ctx, 400, err.Error())
+			return
+		}
+		web.Success(ctx, 200, turnTemp)
+	}
+}
+
 func (h *TurnHandler) HandlerUpdate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
