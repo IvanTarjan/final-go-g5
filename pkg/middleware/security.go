@@ -3,7 +3,6 @@ package middleware
 import (
 	"os"
 
-	"github.com/IvanTarjan/final-go-g5/pkg/web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +12,10 @@ func Authenticate() gin.HandlerFunc {
 		token := os.Getenv("TOKEN")
 
 		if tokenHeader == "" || tokenHeader != token {
-			web.Failure(ctx, 401, "Token inválido")
+			// web.Failure(ctx, 401, "Token inválido")
+			ctx.AbortWithStatusJSON(401, gin.H{
+				"message": "Invalid token.",
+			})
 			return
 		} else {
 			ctx.Next()

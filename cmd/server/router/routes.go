@@ -48,11 +48,11 @@ func (r *router) buildPatientRoutes() {
 	{
 		patientGroup.POST("", middleware.Authenticate(), patientHandler.HandlerCreate())
 		// patientGroup.GET("", patientHandler.GetAll())
-		patientGroup.GET("/:id", middleware.Authenticate(), patientHandler.HandlerGetById())
+		patientGroup.GET("/:id", patientHandler.HandlerGetById())
 		patientGroup.PUT("/:id", middleware.Authenticate(), patientHandler.HandlerUpdate())
 		patientGroup.PATCH(("/:id"), middleware.Authenticate(), patientHandler.HandlerPatch())
 		patientGroup.DELETE("/:id", middleware.Authenticate(), patientHandler.HandlerDelete())
-	}
+	}	
 }
 
 func (r *router) buildDentistRoutes() {

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+
 	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
 
@@ -21,15 +22,15 @@ type repositoryturnssql struct {
 
 // Create implements RepositoryTurn.
 func (r *repositoryturnssql) Create(turn domain.Turn) (domain.Turn, error) {
-	statement , err := r.db.Prepare(QueryInsertTurn)
+	statement, err := r.db.Prepare(QueryInsertTurn)
 	if err != nil {
 		return domain.Turn{}, ErrPrepareStatement
 	}
 	defer statement.Close()
 	result, err := statement.Exec(turn.PatientId, turn.DentistId, turn.DateTime.Format(time.DateTime), turn.Description)
-	if err!= nil {
-        return domain.Turn{}, ErrExecStatement
-    }
+	if err != nil {
+		return domain.Turn{}, ErrExecStatement
+	}
 	lastId, err := result.LastInsertId()
 	if err != nil {
 		return domain.Turn{}, ErrLastInsertedId
@@ -51,22 +52,22 @@ func (r *repositoryturnssql) GetAll() ([]domain.Turn, error) {
 	for rows.Next() {
 		var turn domain.Turn
 		var dateTimeString string
-        err := rows.Scan(
-            &turn.Id,
-            &turn.PatientId,
-            &turn.DentistId,
-            &dateTimeString,
-            &turn.Description,
-        )
-		
-        if err!= nil {
-            return nil, err
-        }
+		err := rows.Scan(
+			&turn.Id,
+			&turn.PatientId,
+			&turn.DentistId,
+			&dateTimeString,
+			&turn.Description,
+		)
+
+		if err != nil {
+			return nil, err
+		}
 		turn.DateTime.Time, err = time.Parse(time.DateTime, dateTimeString)
-		if err!= nil {
-            return nil, err
-        }
-        turns = append(turns, turn)
+		if err != nil {
+			return nil, err
+		}
+		turns = append(turns, turn)
 	}
 
 	if err := rows.Err(); err != nil {
@@ -80,7 +81,6 @@ func (r *repositoryturnssql) GetAll() ([]domain.Turn, error) {
 func (r *repositoryturnssql) Delete(id int64) error {
 	panic("unimplemented")
 }
-
 
 // GetByID implements RepositoryTurn.
 func (r *repositoryturnssql) GetByID(id int64) (domain.Turn, error) {

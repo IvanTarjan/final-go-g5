@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
-	"time"
 
 	"github.com/IvanTarjan/final-go-g5/internal/domain"
 )
@@ -36,14 +35,14 @@ func (r *repositorypatientssql) Create(patient domain.Patient) (domain.Patient, 
 
 	result, err := statement.Exec(
 		patient.Name,
-		patient.Surname,
+		patient.LastName,
 		patient.Address,
 		patient.Dni,
 		patient.DischargeDate,
 	)
 
 	if err != nil {
-		return domain.Patient{}, ErrExecStatement
+		return domain.Patient{}, err
 	}
 
 	lastId, err := result.LastInsertId()
@@ -73,7 +72,7 @@ func (r *repositorypatientssql) GetAll() ([]domain.Patient, error) {
 		err := rows.Scan(
 			&patient.Id,
 			&patient.Name,
-			&patient.Surname,
+			&patient.LastName,
 			&patient.Address,
 			&patient.Dni,
 			&patient.DischargeDate,
@@ -101,7 +100,7 @@ func (r *repositorypatientssql) GetByID(id int64) (domain.Patient, error) {
 	err := row.Scan(
 		&patient.Id,
 		&patient.Name,
-		&patient.Surname,
+		&patient.LastName,
 		&patient.Address,
 		&patient.Dni,
 		&patient.DischargeDate,
@@ -115,22 +114,21 @@ func (r *repositorypatientssql) GetByID(id int64) (domain.Patient, error) {
 }
 
 // Update updates a Patient by ID.
-func (r *repositorypatientssql) Update(
-	patient domain.Patient,
-	id int64) (domain.Patient, error) {
-	statement, err := r.db.Prepare(QueryUpdatePatient)
-	if err != nil {
-		return domain.Patient{}, err
-	}
+func (r *repositorypatientssql) Update(patient domain.Patient, id int64) (domain.Patient, error) {
+	// statement, err := r.db.Prepare(QueryUpdatePatient)
+	// if err != nil {
+	// 	return domain.Patient{}, err
+	// }
 
-	defer statement.Close()
+	// defer statement.Close()
 
-	result, err := statement.Exec(
+	result, err := r.db.Exec(QueryUpdatePatient,
 		patient.Name,
-		patient.Surname,
+		patient.LastName,
 		patient.Address,
 		patient.Dni,
 		patient.DischargeDate,
+		id,
 	)
 
 	if err != nil {
@@ -179,9 +177,9 @@ func (r *repositorypatientssql) Patch(
 		fieldsToUpdate = append(fieldsToUpdate, "name = ?")
 		args = append(args, patient.Name)
 	}
-	if patient.Surname != "" {
-		fieldsToUpdate = append(fieldsToUpdate, "surname = ?")
-		args = append(args, patient.Surname)
+	if patient.LastName != "" {
+		fieldsToUpdate = append(fieldsToUpdate, "last_name = ?")
+		args = append(args, patient.LastName)
 	}
 	if patient.Address != "" {
 		fieldsToUpdate = append(fieldsToUpdate, "address = ?")
@@ -191,7 +189,12 @@ func (r *repositorypatientssql) Patch(
 		fieldsToUpdate = append(fieldsToUpdate, "dni = ?")
 		args = append(args, patient.Dni)
 	}
-	if time.Time.IsZero(patient.DischargeDate.Time) {
+	// if time.Time.IsZero(patient.DischargeDate.Time) {
+	// 	fieldsToUpdate = append(fieldsToUpdate, "discharge_date = ?")
+	// 	args = append(args, patient.DischargeDate)
+	// }
+
+	if !patient.DischargeDate.Time.IsZero() {
 		fieldsToUpdate = append(fieldsToUpdate, "discharge_date = ?")
 		args = append(args, patient.DischargeDate)
 	}
@@ -200,16 +203,21 @@ func (r *repositorypatientssql) Patch(
 		return domain.Patient{}, ErrEmpty
 	}
 
-	queryString := "UPDATE patients SET " + strings.Join(fieldsToUpdate, ", ") + " WHERE id = ?"
+	queryString := "UPDATE patient SET " + strings.Join(fieldsToUpdate, ", ") + " WHERE patient_id = ?"
 	args = append(args, id)
 
-	statement, err := r.db.Prepare(queryString)
+	// statement, err := r.db.Prepare(queryString)
+	// if err != nil {
+	// 	return domain.Patient{}, err
+	// }
+	// defer statement.Close()
+
+	result, err := r.db.Exec(queryString, args...)
 	if err != nil {
 		return domain.Patient{}, err
 	}
-	defer statement.Close()
 
-	_, err = statement.Exec(args...)
+	_, err = result.RowsAffected()
 	if err != nil {
 		return domain.Patient{}, err
 	}

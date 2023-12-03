@@ -108,17 +108,18 @@ func (r *repositorydentistsql) GetByID(id int64) (domain.Dentist, error) {
 
 // Update  updates a Dentist by ID.
 func (r *repositorydentistsql) Update(dentist domain.Dentist, id int64) (domain.Dentist, error) {
-	statement, err := r.db.Prepare(QueryUpdateDentist)
-	if err != nil {
-		return domain.Dentist{}, err
-	}
+	// statement, err := r.db.Prepare(QueryUpdateDentist)
+	// if err != nil {
+	// 	return domain.Dentist{}, err
+	// }
 
-	defer statement.Close()
+	// defer statement.Close()
 
-	result, err := statement.Exec(
+	result, err := r.db.Exec(QueryUpdateDentist,
 		dentist.Name,
 		dentist.LastName,
 		dentist.License,
+		id,
 	)
 
 	if err != nil {
@@ -180,19 +181,30 @@ func (r *repositorydentistsql) Patch(
 		return domain.Dentist{}, ErrEmpty
 	}
 
-	queryString := "UPDATE dentists SET " + strings.Join(fieldsToUpdate, ", ") + " WHERE id = ?"
+	queryString := "UPDATE dentist SET " + strings.Join(fieldsToUpdate, ", ") + " WHERE dentist_id = ?"
 	args = append(args, id)
 
-	statement, err := r.db.Prepare(queryString)
-	if err != nil {
-		return domain.Dentist{}, err
-	}
-	defer statement.Close()
+	// statement, err := r.db.Prepare(queryString)
+	// if err != nil {
+	// 	return domain.Dentist{}, err
+	// }
+	// defer statement.Close()
 
-	_, err = statement.Exec(args...)
+	result, err := r.db.Exec(queryString, args...)
 	if err != nil {
 		return domain.Dentist{}, err
 	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		return domain.Dentist{}, err
+	}
+	/*
+		_, err = statement.Exec(args...)
+		if err != nil {
+			return domain.Dentist{}, err
+		}
+	*/
 
 	return r.GetByID(int64(id))
 }
