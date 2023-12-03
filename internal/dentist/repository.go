@@ -20,7 +20,7 @@ type repositorydentistsql struct {
 	db *sql.DB
 }
 
-func NewSqlRepository(db *sql.DB) RepositoryDentists {
+func NewDentistSqlRepository(db *sql.DB) RepositoryDentists {
 	return &repositorydentistsql{db: db}
 }
 
