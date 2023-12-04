@@ -10,7 +10,7 @@ type ServiceTurn interface {
 	Create(turn domain.Turn) (domain.Turn, error)
 	GetAll() ([]domain.Turn, error)
 	GetByID(id int64) (domain.Turn, error)
-	GetByPatientDni(patientDni string) (domain.Turn, error)
+	GetByPatientDni(patientDni string) ([]domain.TurnDetails, error)
 	Update(turn domain.Turn, id int64) (domain.Turn, error)
 	Delete(id int64) error
 	Patch(turn domain.Turn, id int64) (domain.Turn, error)
@@ -57,14 +57,14 @@ func (s *service) GetByID(id int64) (domain.Turn, error) {
 	return turn, nil
 }
 
-func (s *service) GetByPatientDni(patientDni string) (domain.Turn, error) {
-	turn, err := s.repository.GetByPatientDni(patientDni)
+func (s *service) GetByPatientDni(patientDni string) ([]domain.TurnDetails, error) {
+	turns, err := s.repository.GetByPatientDni(patientDni)
 	if err != nil {
 		log.Println("[ServiceTurns][GetByPatientDNI] error getting turn with PATIENT DNI: ", patientDni, "\n", err)
-		return domain.Turn{}, err
+		return []domain.TurnDetails{}, err
 	}
 
-	return turn, nil
+	return turns, nil
 }
 
 // Patch implements ServiceTurn.

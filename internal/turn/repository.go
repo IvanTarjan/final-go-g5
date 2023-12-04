@@ -13,7 +13,7 @@ var (
 	ErrExecStatement    = errors.New("error exec statement")
 	ErrLastInsertedId   = errors.New("error last inserted id")
 	ErrEmpty            = errors.New("empty list")
-	ErrNotFound         = errors.New("dentist not found")
+	ErrNotFound         = errors.New("turn not found")
 )
 
 type repositoryTurnssql struct {
@@ -92,24 +92,40 @@ func (r *repositoryTurnssql) GetByID(id int64) (domain.Turn, error) {
 	return turn, nil
 }
 
-func (r *repositoryTurnssql) GetByPatientDni(patientDni string) (domain.Turn, error) {
-	row := r.db.QueryRow(QueryGetByPatientDni, patientDni)
-
-	var turn domain.Turn
-
-	err := row.Scan(
-		&turn.Id,
-		&turn.DentistId,
-		&turn.PatientId,
-		&turn.DateTime,
-		&turn.Details,
-	)
-
+func (r *repositoryTurnssql) GetByPatientDni(patientDni string) ([]domain.TurnDetails, error) {
+	rows, err := r.db.Query(QueryGetByPatientDni, patientDni)
 	if err != nil {
-		return domain.Turn{}, err
+		return []domain.TurnDetails{}, err
 	}
 
-	return turn, nil
+	defer rows.Close()
+
+    var turns []domain.TurnDetails
+
+	for rows.Next(){
+
+		var turn domain.TurnDetails
+		err = rows.Scan(
+			&turn.Id,
+			&turn.Dentist.Id,
+			&turn.Dentist.Name,
+			&turn.Dentist.LastName,
+			&turn.Dentist.License,
+			&turn.Patient.Id,
+			&turn.Patient.Name,
+			&turn.Patient.LastName,
+			&turn.Patient.Address,
+			&turn.Patient.Dni,
+			&turn.Patient.DischargeDate,
+			&turn.DateTime,
+			&turn.Details,
+		)
+		if err != nil {
+			return []domain.TurnDetails{}, err
+		}
+		turns = append(turns, turn)
+	}
+	return turns, nil
 }
 
 // Update implements RepositoryTurn.

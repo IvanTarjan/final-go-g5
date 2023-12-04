@@ -14,14 +14,13 @@ type Turn struct {
 	Details   string         `json:"details"`
 }
 
-//Para cambiar
-// type Turn struct {
-// 	Id          int64      `json:"id"`
-// 	PatientDni   string      `json:"patient_id"`
-// 	DentistLicense   string      `json:"dentist_id"`
-// 	DateTime    CustomDate `json:"date_time"`
-// 	Details string     `json:"details"`
-// }
+type TurnDetails struct {
+	Id          int64      `json:"id"`
+	Dentist   Dentist      `json:"dentist"`
+	Patient   Patient      `json:"patient"`
+	DateTime    CustomDateTime `json:"date_time"`
+	Details string     `json:"details"`
+}
 
 type CustomDateTime struct {
 	time.Time
