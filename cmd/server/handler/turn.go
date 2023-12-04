@@ -100,8 +100,7 @@ func (h *TurnHandler) HandlerGetById() gin.HandlerFunc {
 // @Router /turn/patient/{dni} [get]
 func (h *TurnHandler) HandlerGetByPatientDni() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		dni := ctx.Param("dni")
-
+		dni := ctx.Query("dni")
 		turnTemp, err := h.service.GetByPatientDni(dni)
 		if err != nil {
 			web.Failure(ctx, 400, err.Error())

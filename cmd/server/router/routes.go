@@ -84,7 +84,7 @@ func (r *router) buildTurnRoutes() {
 		turnGroup.POST("", middleware.Authenticate(), turnHandler.HandlerCreate())
 		turnGroup.GET("", turnHandler.HandlerGetAll())
 		turnGroup.GET("/:id", turnHandler.HandlerGetById())
-		turnGroup.GET("/dni/:dni", turnHandler.HandlerGetByPatientDni())
+		turnGroup.GET("/dni", turnHandler.HandlerGetByPatientDni())
 		turnGroup.PUT("/:id", middleware.Authenticate(), turnHandler.HandlerUpdate())
 		turnGroup.PATCH("/:id", middleware.Authenticate(), turnHandler.HandlerPatch())
 		turnGroup.DELETE("/:id", middleware.Authenticate(), turnHandler.HandlerDelete())
