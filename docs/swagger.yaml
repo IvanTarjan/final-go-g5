@@ -1,0 +1,593 @@
+basePath: /api/v1
+definitions:
+  domain.CustomDate:
+    properties:
+      time.Time:
+        type: string
+    type: object
+  domain.CustomDateTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
+  domain.Dentist:
+    properties:
+      Id:
+        type: integer
+      LastName:
+        type: string
+      License:
+        type: string
+      Name:
+        type: string
+    type: object
+  domain.Patient:
+    properties:
+      address:
+        type: string
+      discharge_date:
+        $ref: '#/definitions/domain.CustomDate'
+      dni:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      name:
+        type: string
+    type: object
+  domain.Turn:
+    properties:
+      date_time:
+        $ref: '#/definitions/domain.CustomDateTime'
+      dentist_id:
+        type: integer
+      details:
+        type: string
+      id:
+        type: integer
+      patient_id:
+        type: integer
+    type: object
+  web.errorResponse:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+  web.response:
+    properties:
+      data: {}
+      status:
+        type: integer
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API for a dental clinic.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Dental Clinic API
+  version: "1.0"
+paths:
+  /dentist:
+    post:
+      consumes:
+      - application/json
+      description: Create a new dentist
+      parameters:
+      - description: New Dentist
+        in: body
+        name: dentist
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Dentist'
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Dentist successfully created
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Create dentist
+      tags:
+      - dentist
+  /dentist/{id}:
+    delete:
+      description: Delete a dentist by their id
+      parameters:
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deleted dentist with id {id}
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Delete a dentist
+      tags:
+      - dentist
+    get:
+      description: Get a single dentist by their id
+      parameters:
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Dentist Data
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Retrieve a dentist by id
+      tags:
+      - dentist
+    patch:
+      consumes:
+      - application/json
+      description: Partially update a dentist's information by their id
+      parameters:
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Partial Dentist Data
+        in: body
+        name: dentist
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Dentist'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Patched Dentist Data
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Partially update a dentist
+      tags:
+      - dentist
+    put:
+      consumes:
+      - application/json
+      description: Update a dentist's information by their id
+      parameters:
+      - description: Dentist ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Updated Dentist Data
+        in: body
+        name: dentist
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Dentist'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated Dentist Data
+          schema:
+            $ref: '#/definitions/domain.Dentist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Update a dentist
+      tags:
+      - dentist
+  /dentists:
+    get:
+      description: Get a list of all dentists
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Dentists
+          schema:
+            items:
+              $ref: '#/definitions/domain.Dentist'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Retrieve all dentists
+      tags:
+      - dentist
+  /patient:
+    post:
+      consumes:
+      - application/json
+      description: Create a new patient
+      parameters:
+      - description: New Patient
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Patient'
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: patient example
+      tags:
+      - patient
+  /patient/{id}:
+    delete:
+      description: Delete a patient by their id
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deleted patient with id {id}
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Delete a patient
+      tags:
+      - patient
+    get:
+      description: Get a single patient by their id
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Patient Data
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Retrieve a patient by id
+      tags:
+      - patient
+    patch:
+      consumes:
+      - application/json
+      description: Partially update a patient's information by their id
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Partial Patient Data
+        in: body
+        name: patient
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Patient'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Patched Patient Data
+          schema:
+            $ref: '#/definitions/domain.Patient'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Partially update a patient
+      tags:
+      - patient
+  /patients:
+    get:
+      description: Get a list of all patients
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Patients
+          schema:
+            items:
+              $ref: '#/definitions/domain.Patient'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Retrieve all patients
+      tags:
+      - patient
+  /turn:
+    post:
+      consumes:
+      - application/json
+      description: Create a new turn
+      parameters:
+      - description: New Turn
+        in: body
+        name: turn
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Turn'
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Turn successfully created
+          schema:
+            $ref: '#/definitions/domain.Turn'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Create turn
+      tags:
+      - turn
+  /turn/{id}:
+    delete:
+      description: Delete a turn by their id
+      parameters:
+      - description: Turn ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deleted turn with id {id}
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Delete a turn
+      tags:
+      - turn
+    get:
+      description: Get a single turn by their id
+      parameters:
+      - description: Turn ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Turn Data
+          schema:
+            $ref: '#/definitions/domain.Turn'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Retrieve a turn by id
+      tags:
+      - turn
+    patch:
+      consumes:
+      - application/json
+      description: Partially update a turn's information by their id
+      parameters:
+      - description: Turn ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Partial Turn Data
+        in: body
+        name: turn
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Turn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Patched Turn Data
+          schema:
+            $ref: '#/definitions/domain.Turn'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Partially update a turn
+      tags:
+      - turn
+    put:
+      consumes:
+      - application/json
+      description: Update a turn's information by their id
+      parameters:
+      - description: Turn ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token for authentication
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Updated Turn Data
+        in: body
+        name: turn
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Turn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated Turn Data
+          schema:
+            $ref: '#/definitions/domain.Turn'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Update a turn
+      tags:
+      - turn
+  /turn/patient/{dni}:
+    get:
+      description: Get turns associated with a patient's DNI
+      parameters:
+      - description: Patient DNI
+        in: path
+        name: dni
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Turns for Patient
+          schema:
+            items:
+              $ref: '#/definitions/domain.Turn'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Retrieve turns by DNI
+      tags:
+      - turn
+  /turns:
+    get:
+      description: Get a list of all turns
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Turns
+          schema:
+            items:
+              $ref: '#/definitions/domain.Turn'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Retrieve all turns
+      tags:
+      - turn
+swagger: "2.0"
