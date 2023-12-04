@@ -1,0 +1,891 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API for a dental clinic.",
+        "title": "Dental Clinic API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/dentist": {
+            "post": {
+                "description": "Create a new dentist",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dentist"
+                ],
+                "summary": "Create dentist",
+                "parameters": [
+                    {
+                        "description": "New Dentist",
+                        "name": "dentist",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Dentist"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Dentist successfully created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Dentist"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dentist/{id}": {
+            "get": {
+                "description": "Get a single dentist by their id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dentist"
+                ],
+                "summary": "Retrieve a dentist by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Dentist ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dentist Data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Dentist"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a dentist's information by their id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dentist"
+                ],
+                "summary": "Update a dentist",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Dentist ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated Dentist Data",
+                        "name": "dentist",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Dentist"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated Dentist Data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Dentist"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a dentist by their id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dentist"
+                ],
+                "summary": "Delete a dentist",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Dentist ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted dentist with id {id}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Partially update a dentist's information by their id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dentist"
+                ],
+                "summary": "Partially update a dentist",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Dentist ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Partial Dentist Data",
+                        "name": "dentist",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Dentist"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Patched Dentist Data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Dentist"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/dentists": {
+            "get": {
+                "description": "Get a list of all dentists",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dentist"
+                ],
+                "summary": "Retrieve all dentists",
+                "responses": {
+                    "200": {
+                        "description": "List of Dentists",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Dentist"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/patient": {
+            "post": {
+                "description": "Create a new patient",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "patient"
+                ],
+                "summary": "patient example",
+                "parameters": [
+                    {
+                        "description": "New Patient",
+                        "name": "patient",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Patient"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/patient/{id}": {
+            "get": {
+                "description": "Get a single patient by their id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "patient"
+                ],
+                "summary": "Retrieve a patient by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Patient ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Patient Data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Patient"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a patient by their id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "patient"
+                ],
+                "summary": "Delete a patient",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Patient ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted patient with id {id}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Partially update a patient's information by their id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "patient"
+                ],
+                "summary": "Partially update a patient",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Patient ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Partial Patient Data",
+                        "name": "patient",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Patient"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Patched Patient Data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Patient"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/patients": {
+            "get": {
+                "description": "Get a list of all patients",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "patient"
+                ],
+                "summary": "Retrieve all patients",
+                "responses": {
+                    "200": {
+                        "description": "List of Patients",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Patient"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/turn": {
+            "post": {
+                "description": "Create a new turn",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "turn"
+                ],
+                "summary": "Create turn",
+                "parameters": [
+                    {
+                        "description": "New Turn",
+                        "name": "turn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Turn"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Turn successfully created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Turn"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/turn/patient/{dni}": {
+            "get": {
+                "description": "Get turns associated with a patient's DNI",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "turn"
+                ],
+                "summary": "Retrieve turns by DNI",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Patient DNI",
+                        "name": "dni",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of Turns for Patient",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Turn"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/turn/{id}": {
+            "get": {
+                "description": "Get a single turn by their id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "turn"
+                ],
+                "summary": "Retrieve a turn by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Turn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Turn Data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Turn"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a turn's information by their id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "turn"
+                ],
+                "summary": "Update a turn",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Turn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated Turn Data",
+                        "name": "turn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Turn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated Turn Data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Turn"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a turn by their id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "turn"
+                ],
+                "summary": "Delete a turn",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Turn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted turn with id {id}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Partially update a turn's information by their id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "turn"
+                ],
+                "summary": "Partially update a turn",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Turn ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Token for authentication",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Partial Turn Data",
+                        "name": "turn",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Turn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Patched Turn Data",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Turn"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/turns": {
+            "get": {
+                "description": "Get a list of all turns",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "turn"
+                ],
+                "summary": "Retrieve all turns",
+                "responses": {
+                    "200": {
+                        "description": "List of Turns",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Turn"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.CustomDate": {
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.CustomDateTime": {
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Dentist": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                },
+                "LastName": {
+                    "type": "string"
+                },
+                "License": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Patient": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "discharge_date": {
+                    "$ref": "#/definitions/domain.CustomDate"
+                },
+                "dni": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Turn": {
+            "type": "object",
+            "properties": {
+                "date_time": {
+                    "$ref": "#/definitions/domain.CustomDateTime"
+                },
+                "dentist_id": {
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "patient_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web.errorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web.response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "status": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
+    }
+}

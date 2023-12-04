@@ -2,6 +2,8 @@ package router
 
 import (
 	"database/sql"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/IvanTarjan/final-go-g5/cmd/server/handler"
 	"github.com/IvanTarjan/final-go-g5/internal/dentist"
@@ -33,6 +35,7 @@ func (r *router) MapRoutes() {
 	r.buildPatientRoutes()
 	r.buildDentistRoutes()
 	r.buildTurnRoutes()
+	r.engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 func (r *router) setGroup() {
@@ -50,7 +53,7 @@ func (r *router) buildPatientRoutes() {
 		patientGroup.GET("", patientHandler.HandlerGetAll())
 		patientGroup.GET("/:id", patientHandler.HandlerGetById())
 		patientGroup.PUT("/:id", middleware.Authenticate(), patientHandler.HandlerUpdate())
-		patientGroup.PATCH(("/:id"), middleware.Authenticate(), patientHandler.HandlerPatch())
+		patientGroup.PATCH("/:id", middleware.Authenticate(), patientHandler.HandlerPatch())
 		patientGroup.DELETE("/:id", middleware.Authenticate(), patientHandler.HandlerDelete())
 	}
 }
