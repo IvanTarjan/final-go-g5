@@ -29,10 +29,10 @@ func (t *CustomDate) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// func (t *CustomDate) MarshalJSON() ([]byte, error) {
-// 	dateString := time.Time.Format(t.Time, time.DateOnly)
-// 	return []byte(`"` + dateString + `"`), nil
-// }
+func (t *CustomDate) MarshalJSON() ([]byte, error) {
+	dateString := time.Time.Format(t.Time, time.DateOnly)
+	return []byte(`"` + dateString + `"`), nil
+}
 
 //** Revisar nuevos metodos abajo **
 
